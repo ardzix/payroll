@@ -1,0 +1,80 @@
+{% extends 'core/base.html' %}
+{% block content %}
+{% if messages %}
+  <div class="mb-4">
+    {% for message in messages %}
+      <div class="px-4 py-2 rounded bg-green-100 text-green-800 mb-2">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Attendance</h1>
+    <a href="{% url 'attendance_add' %}" class="bg-blue-700 hover:bg-blue-800 text-white font-semibold px-4 py-2 rounded transition dark:text-white dark:bg-blue-600 dark:hover:bg-blue-700">+ Add Attendance</a>
+</div>
+<form method="get" class="mb-4 flex flex-wrap gap-2 items-end">
+    <select name="employee" class="px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600">
+        <option value="">All Employees</option>
+        {% for emp in employees %}
+        <option value="{{ emp.id }}" {% if request.GET.employee == emp.id|stringformat:'s' %}selected{% endif %}>{{ emp.full_name }}</option>
+        {% endfor %}
+    </select>
+    <input type="date" name="date" value="{{ request.GET.date }}" class="px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600">
+    <button type="submit" class="bg-gray-200 hover:bg-gray-300 dark:bg-blue-700 dark:hover:bg-blue-800 text-gray-800 dark:text-white font-semibold px-4 py-2 rounded transition">Filter</button>
+</form>
+<div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800 dark:text-gray-100">
+        <thead class="bg-gray-50 dark:bg-gray-700">
+            <tr>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Employee</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Date</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Check In</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Check Out</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Hours Worked</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="dark:text-white divide-y divide-gray-200 dark:divide-gray-700">
+            {% for att in attendances %}
+            <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
+                <td class="py-2 px-4 text-gray-900 dark:text-white">{{ att.employee.full_name }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">{{ att.date }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">{{ att.check_in|default:'-' }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">{{ att.check_out|default:'-' }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">{{ att.hours_worked|default:'-' }}</td>
+                <td class="py-2 px-4">
+                    <a href="{% url 'attendance_edit' att.pk %}" class="text-blue-600 dark:text-blue-400 hover:underline">Edit</a>
+                    <a href="{% url 'attendance_delete' att.pk %}" class="text-red-600 dark:text-red-400 hover:underline ml-2">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="py-4 text-center text-gray-500 dark:text-gray-300">No attendance records found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% if attendances.has_other_pages %}
+<nav class="flex justify-center mt-6">
+  <ul class="inline-flex -space-x-px">
+    {% if attendances.has_previous %}
+      <li><a href="?page={{ attendances.previous_page_number }}" class="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a></li>
+    {% else %}
+      <li><span class="px-3 py-2 ml-0 leading-tight text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-l-lg">Previous</span></li>
+    {% endif %}
+    {% for num in attendances.paginator.page_range %}
+      {% if attendances.number == num %}
+        <li><span class="px-3 py-2 leading-tight text-blue-700 dark:text-blue-200 bg-blue-100 dark:bg-blue-900 border border-gray-300 dark:border-gray-700">{{ num }}</span></li>
+      {% else %}
+        <li><a href="?page={{ num }}" class="px-3 py-2 leading-tight text-gray-500 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white">{{ num }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if attendances.has_next %}
+      <li><a href="?page={{ attendances.next_page_number }}" class="px-3 py-2 leading-tight text-gray-500 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white">Next</a></li>
+    {% else %}
+      <li><span class="px-3 py-2 leading-tight text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-r-lg">Next</span></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+{% endblock %} 

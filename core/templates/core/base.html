@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" x-data="{ dark: localStorage.getItem('theme') === 'dark' }" x-init="$watch('dark', val => localStorage.setItem('theme', val ? 'dark' : 'light'))" :class="{ 'dark': dark }">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payroll Platform POC</title>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        html, body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+        }
+        .dark .dark\:bg-gray-900 { background-color: #111827; }
+        .dark .dark\:text-white { color: #fff; }
+        .dark .dark\:bg-gray-800 { background-color: #1f2937; }
+        .dark .dark\:bg-gray-700 { background-color: #374151; }
+        .dark .dark\:text-gray-300 { color: #d1d5db; }
+        .dark .dark\:border-gray-700 { border-color: #374151; }
+        .sidebar-primary { background-color: #223567; }
+        .dark .sidebar-primary { background-color: #162040 !important; }
+        .sidebar-hover {
+            transition: background 0.2s, color 0.2s;
+        }
+        .sidebar-active {
+            background: linear-gradient(90deg, #2d448a 0%, #223567 100%);
+            color: #ffe066 !important;
+            font-weight: 600;
+        }
+        .dark .sidebar-active {
+            background: linear-gradient(90deg, #223567 0%, #162040 100%);
+            color: #ffe066 !important;
+        }
+        .sidebar-hover:hover {
+            background-color: #2d448a !important;
+            color: #fff !important;
+        }
+        .dark .sidebar-hover:hover {
+            background-color: #223567 !important;
+            color: #fff !important;
+        }
+        .sidebar-section {
+            color: #b6c6e3;
+        }
+        .dark .sidebar-section {
+            color: #7a8bbd;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen flex font-sans">
+    <!-- Sidebar -->
+    <aside class="w-64 sidebar-primary shadow h-screen flex flex-col">
+        <div class="flex items-center justify-center h-20 border-b border-blue-900/20 dark:border-blue-950/40">
+            <img src="https://i.ibb.co/6bQ7QpT/kayaroll-logo.png" alt="Logo" class="h-10 mr-2">
+            <span class="font-bold text-xl text-white tracking-tight">Kayaroll</span>
+        </div>
+        <div class="flex flex-col items-center py-6">
+            <img src="https://i.ibb.co/6bQ7QpT/kayaroll-logo.png" alt="Company Logo" class="h-16 w-16 rounded-full mb-2 border-4 border-white dark:border-blue-900">
+            <div class="text-center">
+                <div class="font-semibold text-white tracking-tight">Geprek Bensu</div>
+                <div class="text-xs sidebar-section">Food and Beverage</div>
+            </div>
+        </div>
+        <nav class="flex-1 px-4 space-y-1">
+            <a href="{% url 'index' %}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-white sidebar-hover font-medium tracking-tight {% if request.path == '/' %}sidebar-active{% endif %}">
+                <span class="inline-block w-5 text-center">🏠</span> <span class="tracking-tight">Dashboard</span>
+            </a>
+            <div class="mt-4 mb-1 text-xs sidebar-section uppercase tracking-wider">Employee & Company</div>
+            <a href="{% url 'employee_list' %}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-white sidebar-hover font-medium tracking-tight {% if request.path == '/employees/' or request.path|slice:':11' == '/employees/' %}sidebar-active{% endif %}">
+                <span class="inline-block w-5 text-center">👤</span> <span class="tracking-tight">Employee Management</span>
+            </a>
+            <a href="{% url 'work_calendar' %}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-white sidebar-hover font-medium tracking-tight {% if request.path|slice:':14' == '/work-calendar/' %}sidebar-active{% endif %}">
+                <span class="inline-block w-5 text-center">📅</span> <span class="tracking-tight">Work Calendar</span>
+            </a>
+            <div class="mt-4 mb-1 text-xs sidebar-section uppercase tracking-wider">Attendance & Leave</div>
+            <a href="{% url 'attendance_list' %}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-white sidebar-hover font-medium tracking-tight {% if request.path|slice:':11' == '/attendance/' %}sidebar-active{% endif %}">
+                <span class="inline-block w-5 text-center">🕒</span> <span class="tracking-tight">Attendance</span>
+            </a>
+            <a href="{% url 'leave_list' %}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-white sidebar-hover font-medium tracking-tight {% if request.path|slice:':7' == '/leave/' %}sidebar-active{% endif %}">
+                <span class="inline-block w-5 text-center">🌴</span> <span class="tracking-tight">Leave Management</span>
+            </a>
+            <div class="mt-4 mb-1 text-xs sidebar-section uppercase tracking-wider">Payroll</div>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-white sidebar-hover font-medium tracking-tight">
+                <span class="inline-block w-5 text-center">💰</span> <span class="tracking-tight">Compensation & Benefits</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-white sidebar-hover font-medium tracking-tight">
+                <span class="inline-block w-5 text-center">🧾</span> <span class="tracking-tight">Payroll Run</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-white sidebar-hover font-medium tracking-tight">
+                <span class="inline-block w-5 text-center">📄</span> <span class="tracking-tight">Payslip & Export</span>
+            </a>
+            <div class="mt-4 mb-1 text-xs sidebar-section uppercase tracking-wider">Reports</div>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-white sidebar-hover font-medium tracking-tight">
+                <span class="inline-block w-5 text-center">📊</span> <span class="tracking-tight">Tax & BPJS Reports</span>
+            </a>
+        </nav>
+    </aside>
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col min-h-screen">
+        <!-- Topbar -->
+        <header class="flex items-center justify-between bg-white dark:bg-gray-800 shadow px-6 h-20">
+            <div class="flex items-center space-x-4">
+                <button @click="dark = !dark" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none" title="Toggle dark mode">
+                    <svg x-show="!dark" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.07l-.71.71M21 12h-1M4 12H3m16.66 5.66l-.71-.71M4.05 4.93l-.71-.71M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg x-show="dark" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" /></svg>
+                </button>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="text-sm text-gray-700 dark:text-gray-200 font-medium tracking-tight">ID</span>
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="h-10 w-10 rounded-full">
+                <div class="text-right">
+                    <div class="font-semibold text-gray-800 dark:text-white tracking-tight">Hi, Budi</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-300 tracking-tight">HR Admin</div>
+                </div>
+            </div>
+        </header>
+        <main class="flex-1 p-8 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans tracking-tight">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html> 

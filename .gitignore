@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Django
+*.sqlite3
+*.log
+*.pot
+*.pyc
+*.pyo
+*.db
+*.mo
+
+# Environment
+.env
+.env.*
+.venv/
+venv/
+ENV/
+
+# VSCode
+.vscode/
+
+# PyCharm
+.idea/
+
+# Mac
+.DS_Store
+
+# System
+Thumbs.db
+
+# Coverage
+htmlcov/
+.coverage
+.coverage.*
+.cache
+
+# Migrations (optional, keep if you want to version them)
+# core/migrations/__pycache__/ 
+
+prd.md

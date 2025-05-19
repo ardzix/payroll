@@ -1,0 +1,57 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="max-w-xl mx-auto bg-white dark:bg-gray-900 shadow rounded-lg p-8">
+    <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">{{ form_title }}</h1>
+    <form method="post" novalidate id="attendance-form">
+        {% csrf_token %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">Employee</label>
+                {{ form.employee }}
+            </div>
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">Date</label>
+                {{ form.date }}
+            </div>
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">Check In</label>
+                {{ form.check_in }}
+            </div>
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">Check Out</label>
+                {{ form.check_out }}
+            </div>
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">Hours Worked</label>
+                {{ form.hours_worked }}
+            </div>
+        </div>
+        <div class="mt-8 flex justify-end gap-2">
+            <a href="{% url 'attendance_list' %}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-100 font-semibold px-4 py-2 rounded transition">Cancel</a>
+            <button type="submit" class="bg-blue-700 hover:bg-blue-800 text-white dark:bg-blue-500 dark:hover:bg-blue-600 dark:text-white font-semibold px-4 py-2 rounded transition">Save</button>
+        </div>
+    </form>
+</div>
+<script>
+function parseTime(t) {
+    if (!t) return null;
+    const [h, m] = t.split(":").map(Number);
+    return h * 60 + m;
+}
+function calcHours() {
+    const checkIn = document.getElementById('id_check_in').value;
+    const checkOut = document.getElementById('id_check_out').value;
+    const hoursField = document.getElementById('id_hours_worked');
+    if (checkIn && checkOut) {
+        let inMins = parseTime(checkIn);
+        let outMins = parseTime(checkOut);
+        let diff = outMins - inMins;
+        if (diff < 0) diff += 24 * 60; // overnight
+        let hours = (diff / 60).toFixed(2);
+        hoursField.value = hours;
+    }
+}
+document.getElementById('id_check_in').addEventListener('change', calcHours);
+document.getElementById('id_check_out').addEventListener('change', calcHours);
+</script>
+{% endblock %} 

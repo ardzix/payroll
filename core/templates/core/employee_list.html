@@ -1,0 +1,96 @@
+{% extends 'core/base.html' %}
+{% load humanize %}
+{% block content %}
+{% if messages %}
+  <div class="mb-4">
+    {% for message in messages %}
+      <div class="px-4 py-2 rounded bg-green-100 text-green-800 mb-2">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Employees</h1>
+    <a href="{% url 'employee_add' %}" class="bg-blue-700 hover:bg-blue-800 text-white font-semibold px-4 py-2 rounded transition dark:text-white dark:bg-blue-600 dark:hover:bg-blue-700">+ Add Employee</a>
+</div>
+<form method="get" class="mb-4 flex flex-wrap gap-2 items-end">
+    <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search name or NIK" class="px-3 py-2 border rounded w-48 bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400">
+    <select name="status" class="px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600">
+        <option value="">All Status</option>
+        <option value="staff" {% if request.GET.status == 'staff' %}selected{% endif %}>Staff</option>
+        <option value="contract" {% if request.GET.status == 'contract' %}selected{% endif %}>Contract</option>
+        <option value="outsourced" {% if request.GET.status == 'outsourced' %}selected{% endif %}>Outsourced</option>
+    </select>
+    <select name="sort" class="px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600">
+        <option value="">Sort By</option>
+        <option value="full_name" {% if request.GET.sort == 'full_name' %}selected{% endif %}>Name</option>
+        <option value="status" {% if request.GET.sort == 'status' %}selected{% endif %}>Status</option>
+        <option value="base_salary" {% if request.GET.sort == 'base_salary' %}selected{% endif %}>Base Salary</option>
+    </select>
+    <button type="submit" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover text-gray-800 dark:text-white font-semibold px-4 py-2 rounded transition">Filter</button>
+</form>
+<div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800 dark:text-gray-100">
+        <thead class="bg-gray-50 dark:bg-gray-700">
+            <tr>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Name</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">NIK</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">NPWP</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Status</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Pay Period</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Work Type</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Bank</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Base Salary</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">PTKP</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="dark:text-white divide-y divide-gray-200 dark:divide-gray-700">
+            {% for emp in employees %}
+            <tr class="hover:bg-gray-400 hover:dark:bg-gray-200">
+                <td class="py-2 px-4 text-gray-900 dark:text-white">{{ emp.full_name }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">{{ emp.nik }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">{{ emp.npwp }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">{{ emp.get_status_display }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">{{ emp.get_pay_period_display }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">{{ emp.get_work_type_display }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">{{ emp.bank_name }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">Rp {{ emp.base_salary|intcomma }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">{{ emp.ptkp_status }}</td>
+                <td class="py-2 px-4">
+                    <a href="{% url 'employee_edit' emp.pk %}" class="text-blue-600 dark:text-blue-400 hover:underline">Edit</a>
+                    <a href="{% url 'employee_delete' emp.pk %}" class="text-red-600 dark:text-red-400 hover:underline ml-2">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="10" class="py-4 text-center text-gray-500 dark:text-gray-300">No employees found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<!-- Pagination -->
+{% if page_obj.has_other_pages %}
+<nav class="flex justify-center mt-6">
+  <ul class="inline-flex -space-x-px">
+    {% if page_obj.has_previous %}
+      <li><a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.previous_page_number }}" class="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a></li>
+    {% else %}
+      <li><span class="px-3 py-2 ml-0 leading-tight text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-l-lg">Previous</span></li>
+    {% endif %}
+    {% for num in page_obj.paginator.page_range %}
+      {% if page_obj.number == num %}
+        <li><span class="px-3 py-2 leading-tight text-blue-700 dark:text-blue-200 bg-blue-100 dark:bg-blue-900 border border-gray-300 dark:border-gray-700">{{ num }}</span></li>
+      {% else %}
+        <li><a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ num }}" class="px-3 py-2 leading-tight text-gray-500 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white">{{ num }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+      <li><a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.next_page_number }}" class="px-3 py-2 leading-tight text-gray-500 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white">Next</a></li>
+    {% else %}
+      <li><span class="px-3 py-2 leading-tight text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-r-lg">Next</span></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+{% endblock %} 

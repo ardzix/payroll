@@ -1,0 +1,75 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white dark:bg-gray-900 shadow rounded-lg p-8">
+    <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">{{ form_title|default:'Add Employee' }}</h1>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">Full Name</label>
+                <input type="text" name="full_name" value="{{ form.full_name.value|default_if_none:'' }}" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400" required>
+            </div>
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">NIK</label>
+                <input type="text" name="nik" value="{{ form.nik.value|default_if_none:'' }}" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400" required>
+            </div>
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">NPWP</label>
+                <input type="text" name="npwp" value="{{ form.npwp.value|default_if_none:'' }}" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400">
+            </div>
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">Status</label>
+                <select name="status" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600" required>
+                    {% for val, label in form.fields.status.choices %}
+                    <option value="{{ val }}" {% if form.status.value == val %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">Pay Period</label>
+                <select name="pay_period" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600" required>
+                    {% for val, label in form.fields.pay_period.choices %}
+                    <option value="{{ val }}" {% if form.pay_period.value == val %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">Work Type</label>
+                <select name="work_type" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600" required>
+                    {% for val, label in form.fields.work_type.choices %}
+                    <option value="{{ val }}" {% if form.work_type.value == val %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">Bank Name</label>
+                <input type="text" name="bank_name" value="{{ form.bank_name.value|default_if_none:'' }}" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400">
+            </div>
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">Bank Account Number</label>
+                <input type="text" name="bank_account_number" value="{{ form.bank_account_number.value|default_if_none:'' }}" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400">
+            </div>
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">Account Holder Name</label>
+                <input type="text" name="account_holder_name" value="{{ form.account_holder_name.value|default_if_none:'' }}" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400">
+            </div>
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">Base Salary</label>
+                <input type="number" name="base_salary" value="{{ form.base_salary.value|default_if_none:'' }}" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400" required>
+            </div>
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">PTKP Status</label>
+                <select name="ptkp_status" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600" required>
+                    {% for val, label in form.fields.ptkp_status.choices %}
+                    <option value="{{ val }}" {% if form.ptkp_status.value == val %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="mt-8 flex justify-end gap-2">
+            <a href="{% url 'employee_list' %}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-100 font-semibold px-4 py-2 rounded transition">Cancel</a>
+            <button type="submit" class="bg-blue-700 hover:bg-blue-800 text-white dark:bg-blue-500 dark:hover:bg-blue-600 dark:text-white font-semibold px-4 py-2 rounded transition">Save</button>
+        </div>
+    </form>
+</div>
+{% endblock %} 

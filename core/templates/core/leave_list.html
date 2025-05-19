@@ -1,0 +1,83 @@
+{% extends 'core/base.html' %}
+{% block content %}
+{% if messages %}
+  <div class="mb-4">
+    {% for message in messages %}
+      <div class="px-4 py-2 rounded bg-green-100 text-green-800 mb-2">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Leave Management</h1>
+    <a href="{% url 'leave_add' %}" class="bg-blue-700 hover:bg-blue-800 text-white font-semibold px-4 py-2 rounded transition dark:text-white dark:bg-blue-600 dark:hover:bg-blue-700">+ Add Leave</a>
+</div>
+<form method="get" class="mb-4 flex flex-wrap gap-2 items-end">
+    <select name="employee" class="px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600">
+        <option value="">All Employees</option>
+        {% for emp in employees %}
+        <option value="{{ emp.id }}" {% if request.GET.employee == emp.id|stringformat:'s' %}selected{% endif %}>{{ emp.full_name }}</option>
+        {% endfor %}
+    </select>
+    <input type="date" name="date" value="{{ request.GET.date }}" class="px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600">
+    <select name="leave_type" class="px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600">
+        <option value="">All Types</option>
+        <option value="paid" {% if request.GET.leave_type == 'paid' %}selected{% endif %}>Paid</option>
+        <option value="unpaid" {% if request.GET.leave_type == 'unpaid' %}selected{% endif %}>Unpaid</option>
+    </select>
+    <button type="submit" class="bg-gray-200 hover:bg-gray-300 dark:bg-blue-700 dark:hover:bg-blue-800 text-gray-800 dark:text-white font-semibold px-4 py-2 rounded transition">Filter</button>
+</form>
+<div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800 dark:text-gray-100">
+        <thead class="bg-gray-50 dark:bg-gray-700">
+            <tr>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Employee</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Start Date</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">End Date</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Type</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="dark:text-white divide-y divide-gray-200 dark:divide-gray-700">
+            {% for leave in leaves %}
+            <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
+                <td class="py-2 px-4 text-gray-900 dark:text-white">{{ leave.employee.full_name }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">{{ leave.start_date }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">{{ leave.end_date }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">{{ leave.get_leave_type_display }}</td>
+                <td class="py-2 px-4">
+                    <a href="{% url 'leave_edit' leave.pk %}" class="text-blue-600 dark:text-blue-400 hover:underline">Edit</a>
+                    <a href="{% url 'leave_delete' leave.pk %}" class="text-red-600 dark:text-red-400 hover:underline ml-2">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="py-4 text-center text-gray-500 dark:text-gray-300">No leave records found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% if leaves.has_other_pages %}
+<nav class="flex justify-center mt-6">
+  <ul class="inline-flex -space-x-px">
+    {% if leaves.has_previous %}
+      <li><a href="?page={{ leaves.previous_page_number }}" class="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a></li>
+    {% else %}
+      <li><span class="px-3 py-2 ml-0 leading-tight text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-l-lg">Previous</span></li>
+    {% endif %}
+    {% for num in leaves.paginator.page_range %}
+      {% if leaves.number == num %}
+        <li><span class="px-3 py-2 leading-tight text-blue-700 dark:text-blue-200 bg-blue-100 dark:bg-blue-900 border border-gray-300 dark:border-gray-700">{{ num }}</span></li>
+      {% else %}
+        <li><a href="?page={{ num }}" class="px-3 py-2 leading-tight text-gray-500 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white">{{ num }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if leaves.has_next %}
+      <li><a href="?page={{ leaves.next_page_number }}" class="px-3 py-2 leading-tight text-gray-500 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white">Next</a></li>
+    {% else %}
+      <li><span class="px-3 py-2 leading-tight text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-r-lg">Next</span></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+{% endblock %} 
