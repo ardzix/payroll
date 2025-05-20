@@ -23,17 +23,15 @@ COPY requirements.txt /app/
 RUN pip install --upgrade pip \
     && pip install -r requirements.txt
 
+# Create a non-root user
+RUN adduser --disabled-password --gecos '' django
+
 # Copy project
 COPY . /app/
 RUN chown -R django:django /app
 
 # Collect static files
 # RUN python manage.py collectstatic --noinput
-
-# Create a non-root user
-RUN adduser --disabled-password --gecos '' django
-USER django
-
 
 # Copy supervisord configuration
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
