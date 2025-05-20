@@ -1,0 +1,58 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="max-w-xl mx-auto bg-white dark:bg-gray-900 shadow rounded-lg p-8">
+    <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">{{ form_title }}</h1>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">Employee</label>
+                {{ form.employee }}
+                {% for error in form.employee.errors %}<div class="text-xs text-red-600">{{ error }}</div>{% endfor %}
+            </div>
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">Payroll Run</label>
+                {{ form.payroll_run }}
+                {% for error in form.payroll_run.errors %}<div class="text-xs text-red-600">{{ error }}</div>{% endfor %}
+            </div>
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">Gross Salary</label>
+                {{ form.gross_salary }}
+                {% for error in form.gross_salary.errors %}<div class="text-xs text-red-600">{{ error }}</div>{% endfor %}
+            </div>
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">Tax Deduction (PPh 21)</label>
+                {{ form.tax_deduction }}
+                {% for error in form.tax_deduction.errors %}<div class="text-xs text-red-600">{{ error }}</div>{% endfor %}
+            </div>
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">Other Deductions</label>
+                {{ form.other_deductions }}
+                {% for error in form.other_deductions.errors %}<div class="text-xs text-red-600">{{ error }}</div>{% endfor %}
+            </div>
+            <div class="md:col-span-2">
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">Notes</label>
+                {{ form.notes }}
+                {% for error in form.notes.errors %}<div class="text-xs text-red-600">{{ error }}</div>{% endfor %}
+            </div>
+        </div>
+        {% if form.instance.pk %}
+        <div class="mt-8 p-4 rounded bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+            <h2 class="text-lg font-bold text-gray-700 dark:text-white mb-2">Deductions & Net Salary Summary</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div>BPJS Kesehatan (Employee): <span class="font-semibold">Rp {{ form.instance.bpjs_kesehatan_employee|default:0|intcomma }}</span></div>
+                <div>BPJS Kesehatan (Employer): <span class="font-semibold">Rp {{ form.instance.bpjs_kesehatan_employer|default:0|intcomma }}</span></div>
+                <div>BPJS Ketenagakerjaan (Employee): <span class="font-semibold">Rp {{ form.instance.bpjs_ketenagakerjaan_employee|default:0|intcomma }}</span></div>
+                <div>BPJS Ketenagakerjaan (Employer): <span class="font-semibold">Rp {{ form.instance.bpjs_ketenagakerjaan_employer|default:0|intcomma }}</span></div>
+                <div>Total Deductions: <span class="font-semibold">Rp {{ form.instance.total_deductions|default:0|intcomma }}</span></div>
+                <div>Net Salary: <span class="font-bold text-blue-700 dark:text-blue-400">Rp {{ form.instance.net_salary|default:0|intcomma }}</span></div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="mt-8 flex justify-end gap-2">
+            <a href="{% url 'compensation_list' %}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-100 font-semibold px-4 py-2 rounded transition">Cancel</a>
+            <button type="submit" class="bg-blue-700 hover:bg-blue-800 text-white dark:bg-blue-500 dark:hover:bg-blue-600 dark:text-white font-semibold px-4 py-2 rounded transition">Save</button>
+        </div>
+    </form>
+</div>
+{% endblock %} 

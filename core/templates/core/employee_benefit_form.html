@@ -1,0 +1,30 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="max-w-xl mx-auto bg-white dark:bg-gray-900 shadow rounded-lg p-8">
+    <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">{{ form_title|default:'Employee Benefit' }}</h1>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">Employee</label>
+                {{ form.employee }}
+                {% for error in form.employee.errors %}<div class="text-xs text-red-600">{{ error }}</div>{% endfor %}
+            </div>
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">Benefit Type</label>
+                {{ form.benefit_type }}
+                {% for error in form.benefit_type.errors %}<div class="text-xs text-red-600">{{ error }}</div>{% endfor %}
+            </div>
+            <div>
+                <label class="block text-gray-700 dark:text-white font-semibold mb-1">Amount</label>
+                {{ form.amount }}
+                {% for error in form.amount.errors %}<div class="text-xs text-red-600">{{ error }}</div>{% endfor %}
+            </div>
+        </div>
+        <div class="mt-8 flex justify-end gap-2">
+            <a href="{% url 'employee_benefit_list' %}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-100 font-semibold px-4 py-2 rounded transition">Cancel</a>
+            <button type="submit" class="bg-blue-700 hover:bg-blue-800 text-white dark:bg-blue-500 dark:hover:bg-blue-600 dark:text-white font-semibold px-4 py-2 rounded transition">Save</button>
+        </div>
+    </form>
+</div>
+{% endblock %} 

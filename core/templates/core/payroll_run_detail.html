@@ -1,0 +1,73 @@
+{% extends 'core/base.html' %}
+{% load humanize %}
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Payroll Run Detail</h1>
+    <div class="flex items-center justify-between mb-2">
+        <div>
+            <div class="text-gray-700 dark:text-gray-300">Period: <span class="font-semibold">{{ run.period_start }} - {{ run.period_end }}</span></div>
+            <div class="text-gray-700 dark:text-gray-300">Run Date: <span class="font-semibold">{{ run.run_date|date:'Y-m-d H:i' }}</span></div>
+            <div class="text-gray-700 dark:text-gray-300">Notes: <span class="font-normal">{{ run.notes|default:'-' }}</span></div>
+        </div>
+        <div class="flex gap-2">
+            <a href="{% url 'generate_payroll_items' run.id %}" class="bg-blue-700 hover:bg-blue-800 text-white font-semibold px-4 py-2 rounded transition dark:text-white dark:bg-blue-600 dark:hover:bg-blue-700">Generate Payroll Items</a>
+            <a href="{% url 'export_payslips_zip' run.id %}" class="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded transition dark:text-white dark:bg-green-600 dark:hover:bg-green-700">Export All Payslips</a>
+            <a href="{% url 'export_payroll_csv' run.id %}" class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold px-4 py-2 rounded transition dark:text-white dark:bg-yellow-500 dark:hover:bg-yellow-600">Export Payroll CSV</a>
+        </div>
+    </div>
+    <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800 dark:text-gray-100">
+            <thead class="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Employee</th>
+                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Base Salary</th>
+                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Benefits</th>
+                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Total Benefits</th>
+                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Gross Salary</th>
+                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Tax</th>
+                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Other Deduct.</th>
+                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">BPJS Kes (Emp)</th>
+                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">BPJS Kes (Com)</th>
+                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">BPJS Ket (Emp)</th>
+                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">BPJS Ket (Com)</th>
+                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Total Deduct.</th>
+                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Net Salary</th>
+                </tr>
+            </thead>
+            <tbody class="dark:text-white divide-y divide-gray-200 dark:divide-gray-700">
+                {% for data in employee_data %}
+                <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <td class="py-2 px-4 text-gray-900 dark:text-white">{{ data.employee.full_name }}</td>
+                    <td class="py-2 px-4 text-gray-900 dark:text-white">Rp {{ data.base_salary|intcomma }}</td>
+                    <td class="py-2 px-4 text-gray-900 dark:text-white">
+                        {% if data.benefits %}
+                            <ul class="list-disc list-inside">
+                                {% for b in data.benefits %}
+                                    <li>{{ b.get_benefit_type_display }}: Rp {{ b.amount|intcomma }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td class="py-2 px-4 text-gray-900 dark:text-white">Rp {{ data.total_benefits|intcomma }}</td>
+                    <td class="py-2 px-4 text-gray-900 dark:text-white font-bold">Rp {{ data.gross_salary|intcomma }}</td>
+                    {% if data.payroll_item %}
+                    <td class="py-2 px-4 text-gray-900 dark:text-white">Rp {{ data.payroll_item.tax_deduction|intcomma }}</td>
+                    <td class="py-2 px-4 text-gray-900 dark:text-white">Rp {{ data.payroll_item.other_deductions|intcomma }}</td>
+                    <td class="py-2 px-4 text-gray-900 dark:text-white">Rp {{ data.payroll_item.bpjs_kesehatan_employee|intcomma }}</td>
+                    <td class="py-2 px-4 text-gray-900 dark:text-white">Rp {{ data.payroll_item.bpjs_kesehatan_employer|intcomma }}</td>
+                    <td class="py-2 px-4 text-gray-900 dark:text-white">Rp {{ data.payroll_item.bpjs_ketenagakerjaan_employee|intcomma }}</td>
+                    <td class="py-2 px-4 text-gray-900 dark:text-white">Rp {{ data.payroll_item.bpjs_ketenagakerjaan_employer|intcomma }}</td>
+                    <td class="py-2 px-4 text-gray-900 dark:text-white">Rp {{ data.payroll_item.total_deductions|intcomma }}</td>
+                    <td class="py-2 px-4 text-gray-900 dark:text-white font-bold">Rp {{ data.payroll_item.net_salary|intcomma }}</td>
+                    {% else %}
+                    <td colspan="8" class="py-2 px-4 text-gray-500 dark:text-gray-400 text-center">No payroll item</td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %} 

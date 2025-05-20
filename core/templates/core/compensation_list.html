@@ -1,0 +1,121 @@
+{% extends 'core/base.html' %}
+{% load humanize %}
+{% block content %}
+{% if messages %}
+  <div class="mb-4">
+    {% for message in messages %}
+      <div class="px-4 py-2 rounded bg-green-100 text-green-800 mb-2">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Compensation & Benefit</h1>
+    <a href="{% url 'compensation_add' %}" class="bg-blue-700 hover:bg-blue-800 text-white font-semibold px-4 py-2 rounded transition dark:text-white dark:bg-blue-600 dark:hover:bg-blue-700">+ Add Compensation</a>
+</div>
+<form method="get" class="mb-4 flex flex-wrap gap-2 items-end">
+    <select name="employee" class="px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600">
+        <option value="">All Employees</option>
+        {% for emp in employees %}
+        <option value="{{ emp.id }}" {% if request.GET.employee == emp.id|stringformat:'s' %}selected{% endif %}>{{ emp.full_name }}</option>
+        {% endfor %}
+    </select>
+    <select name="payroll_run" class="px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600">
+        <option value="">All Payroll Runs</option>
+        {% for pr in payroll_runs %}
+        <option value="{{ pr.id }}" {% if request.GET.payroll_run == pr.id|stringformat:'s' %}selected{% endif %}>{{ pr.period_start }} - {{ pr.period_end }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="bg-gray-200 hover:bg-gray-300 dark:bg-blue-700 dark:hover:bg-blue-800 text-gray-800 dark:text-white font-semibold px-4 py-2 rounded transition">Filter</button>
+</form>
+<div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800 dark:text-gray-100">
+        <thead class="bg-gray-50 dark:bg-gray-700">
+            <tr>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Employee</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Payroll Run</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Gross Salary</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Tax Deduction</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Other Deductions</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">BPJS Kes (Emp)</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">BPJS Kes (Com)</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">BPJS Ket (Emp)</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">BPJS Ket (Com)</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">BPJS JP (Emp)</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">BPJS JP (Com)</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Total Deductions</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Net Salary</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Notes</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="dark:text-white divide-y divide-gray-200 dark:divide-gray-700">
+            {% for item in items %}
+            <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
+                <td class="py-2 px-4 text-gray-900 dark:text-white">{{ item.employee.full_name }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">{{ item.payroll_run.period_start }} - {{ item.payroll_run.period_end }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">{{ item.gross_salary|intcomma }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">{{ item.tax_deduction|intcomma }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">{{ item.other_deductions|intcomma }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">Rp {{ item.bpjs_kesehatan_employee|intcomma }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">Rp {{ item.bpjs_kesehatan_employer|intcomma }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">Rp {{ item.bpjs_ketenagakerjaan_employee|intcomma }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">Rp {{ item.bpjs_ketenagakerjaan_employer|intcomma }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">Rp {{ item.bpjs_jp_employee|intcomma }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">Rp {{ item.bpjs_jp_employer|intcomma }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">Rp {{ item.total_deductions|intcomma }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white font-bold">Rp {{ item.net_salary|intcomma }}</td>
+                <td class="py-2 px-4 text-gray-900 dark:text-white">{{ item.notes|default:'-' }}</td>
+                <td class="py-2 px-4">
+                    <a href="{% url 'payslip_view' item.pk %}" class="text-green-600 dark:text-green-400 hover:underline mr-2">View Payslip</a>
+                    <a href="{% url 'compensation_edit' item.pk %}" class="text-blue-600 dark:text-blue-400 hover:underline">Edit</a>
+                    <a href="{% url 'compensation_delete' item.pk %}" class="text-red-600 dark:text-red-400 hover:underline ml-2">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="py-4 text-center text-gray-500 dark:text-gray-300">No compensation records found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% if items.has_other_pages %}
+{% with last_page=items.paginator.num_pages %}
+{% with last_minus_1=last_page|add:'-1' last_minus_3=last_page|add:'-3' %}
+<nav class="flex justify-center mt-6">
+  <ul class="inline-flex -space-x-px">
+    {% if items.has_previous %}
+      <li><a href="?page={{ items.previous_page_number }}" class="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a></li>
+    {% else %}
+      <li><span class="px-3 py-2 ml-0 leading-tight text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-l-lg">Previous</span></li>
+    {% endif %}
+    {% for num in items.paginator.page_range %}
+      {% if num == 1 or num == last_page %}
+        {% if num == items.number %}
+          <li><span class="px-3 py-2 leading-tight text-blue-700 dark:text-blue-200 bg-blue-100 dark:bg-blue-900 border border-gray-300 dark:border-gray-700">{{ num }}</span></li>
+        {% else %}
+          <li><a href="?page={{ num }}" class="px-3 py-2 leading-tight text-gray-500 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white">{{ num }}</a></li>
+        {% endif %}
+      {% elif num >= items.number|add:'-2' and num <= items.number|add:'2' %}
+        {% if num == items.number %}
+          <li><span class="px-3 py-2 leading-tight text-blue-700 dark:text-blue-200 bg-blue-100 dark:bg-blue-900 border border-gray-300 dark:border-gray-700">{{ num }}</span></li>
+        {% else %}
+          <li><a href="?page={{ num }}" class="px-3 py-2 leading-tight text-gray-500 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white">{{ num }}</a></li>
+        {% endif %}
+      {% elif num == 2 and items.number > 4 %}
+        <li><span class="px-3 py-2 leading-tight text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700">...</span></li>
+      {% elif num == last_minus_1 and items.number < last_minus_3 %}
+        <li><span class="px-3 py-2 leading-tight text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700">...</span></li>
+      {% endif %}
+    {% endfor %}
+    {% if items.has_next %}
+      <li><a href="?page={{ items.next_page_number }}" class="px-3 py-2 leading-tight text-gray-500 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white">Next</a></li>
+    {% else %}
+      <li><span class="px-3 py-2 leading-tight text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-r-lg">Next</span></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endwith %}
+{% endwith %}
+{% endif %}
+{% endblock %} 

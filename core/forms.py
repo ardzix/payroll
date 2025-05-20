@@ -1,5 +1,5 @@
 from django import forms
-from .models import Employee, Attendance, Leave
+from .models import Employee, Attendance, Leave, PayrollItem, EmployeeBenefit
 from django.forms import DateInput, TimeInput
 import datetime
 
@@ -13,9 +13,11 @@ class AttendanceForm(forms.ModelForm):
         model = Attendance
         fields = '__all__'
         widgets = {
-            'date': DateInput(attrs={'type': 'date'}),
-            'check_in': TimeInput(attrs={'type': 'time'}),
-            'check_out': TimeInput(attrs={'type': 'time'}),
+            'employee': forms.Select(attrs={'class': 'w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700'}),
+            'date': DateInput(attrs={'type': 'date', 'class': 'w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700'}),
+            'check_in': TimeInput(attrs={'type': 'time', 'class': 'w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700'}),
+            'check_out': TimeInput(attrs={'type': 'time', 'class': 'w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700'}),
+            'hours_worked': forms.TextInput(attrs={'class': 'w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700', 'readonly': 'readonly'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -40,6 +42,36 @@ class LeaveForm(forms.ModelForm):
         model = Leave
         fields = '__all__'
         widgets = {
-            'start_date': DateInput(attrs={'type': 'date'}),
-            'end_date': DateInput(attrs={'type': 'date'}),
+            'employee': forms.Select(attrs={'class': 'w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700'}),
+            'start_date': DateInput(attrs={'type': 'date', 'class': 'w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700'}),
+            'end_date': DateInput(attrs={'type': 'date', 'class': 'w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700'}),
+            'leave_type': forms.Select(attrs={'class': 'w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700'}),
+        }
+
+class PayrollItemForm(forms.ModelForm):
+    class Meta:
+        model = PayrollItem
+        exclude = [
+            'bpjs_kesehatan_employee',
+            'bpjs_kesehatan_employer',
+            'bpjs_ketenagakerjaan_employee',
+            'bpjs_ketenagakerjaan_employer',
+            'total_deductions',
+            'net_salary',
+        ]
+        widgets = {
+            'gross_salary': forms.NumberInput(attrs={'class': 'w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700'}),
+            'tax_deduction': forms.NumberInput(attrs={'class': 'w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700'}),
+            'other_deductions': forms.NumberInput(attrs={'class': 'w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700'}),
+            'notes': forms.Textarea(attrs={'class': 'w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700'}),
+        }
+
+class EmployeeBenefitForm(forms.ModelForm):
+    class Meta:
+        model = EmployeeBenefit
+        fields = '__all__'
+        widgets = {
+            'employee': forms.Select(attrs={'class': 'w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700'}),
+            'benefit_type': forms.Select(attrs={'class': 'w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700'}),
+            'amount': forms.NumberInput(attrs={'class': 'w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700'}),
         } 

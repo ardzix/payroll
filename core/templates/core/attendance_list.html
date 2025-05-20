@@ -55,6 +55,8 @@
     </table>
 </div>
 {% if attendances.has_other_pages %}
+{% with last_page=attendances.paginator.num_pages %}
+{% with last_minus_1=last_page|add:'-1' last_minus_3=last_page|add:'-3' %}
 <nav class="flex justify-center mt-6">
   <ul class="inline-flex -space-x-px">
     {% if attendances.has_previous %}
@@ -63,10 +65,22 @@
       <li><span class="px-3 py-2 ml-0 leading-tight text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-l-lg">Previous</span></li>
     {% endif %}
     {% for num in attendances.paginator.page_range %}
-      {% if attendances.number == num %}
-        <li><span class="px-3 py-2 leading-tight text-blue-700 dark:text-blue-200 bg-blue-100 dark:bg-blue-900 border border-gray-300 dark:border-gray-700">{{ num }}</span></li>
-      {% else %}
-        <li><a href="?page={{ num }}" class="px-3 py-2 leading-tight text-gray-500 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white">{{ num }}</a></li>
+      {% if num == 1 or num == last_page %}
+        {% if num == attendances.number %}
+          <li><span class="px-3 py-2 leading-tight text-blue-700 dark:text-blue-200 bg-blue-100 dark:bg-blue-900 border border-gray-300 dark:border-gray-700">{{ num }}</span></li>
+        {% else %}
+          <li><a href="?page={{ num }}" class="px-3 py-2 leading-tight text-gray-500 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white">{{ num }}</a></li>
+        {% endif %}
+      {% elif num >= attendances.number|add:'-2' and num <= attendances.number|add:'2' %}
+        {% if num == attendances.number %}
+          <li><span class="px-3 py-2 leading-tight text-blue-700 dark:text-blue-200 bg-blue-100 dark:bg-blue-900 border border-gray-300 dark:border-gray-700">{{ num }}</span></li>
+        {% else %}
+          <li><a href="?page={{ num }}" class="px-3 py-2 leading-tight text-gray-500 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white">{{ num }}</a></li>
+        {% endif %}
+      {% elif num == 2 and attendances.number > 4 %}
+        <li><span class="px-3 py-2 leading-tight text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700">...</span></li>
+      {% elif num == last_minus_1 and attendances.number < last_minus_3 %}
+        <li><span class="px-3 py-2 leading-tight text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700">...</span></li>
       {% endif %}
     {% endfor %}
     {% if attendances.has_next %}
@@ -76,5 +90,7 @@
     {% endif %}
   </ul>
 </nav>
+{% endwith %}
+{% endwith %}
 {% endif %}
 {% endblock %} 

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en" x-data="{ dark: localStorage.getItem('theme') === 'dark' }" x-init="$watch('dark', val => localStorage.setItem('theme', val ? 'dark' : 'light'))" :class="{ 'dark': dark }">
 <head>
@@ -50,14 +51,14 @@
     <!-- Sidebar -->
     <aside class="w-64 sidebar-primary shadow h-screen flex flex-col">
         <div class="flex items-center justify-center h-20 border-b border-blue-900/20 dark:border-blue-950/40">
-            <img src="https://i.ibb.co/6bQ7QpT/kayaroll-logo.png" alt="Logo" class="h-10 mr-2">
-            <span class="font-bold text-xl text-white tracking-tight">Kayaroll</span>
+            <img src="{% static 'img/arna-logo.png' %}" alt="Arna Technology Logo" class="h-10 mr-2">
+            <span class="font-bold text-xl text-white tracking-tight">Arna Technology</span>
         </div>
         <div class="flex flex-col items-center py-6">
-            <img src="https://i.ibb.co/6bQ7QpT/kayaroll-logo.png" alt="Company Logo" class="h-16 w-16 rounded-full mb-2 border-4 border-white dark:border-blue-900">
+            <img src="{% static 'img/arna-logo.png' %}" alt="Company Logo" class="h-16 w-16 rounded-full mb-2 border-4 border-white dark:border-blue-900">
             <div class="text-center">
-                <div class="font-semibold text-white tracking-tight">Geprek Bensu</div>
-                <div class="text-xs sidebar-section">Food and Beverage</div>
+                <div class="font-semibold text-white tracking-tight">Arna Technology</div>
+                <div class="text-xs sidebar-section">Technology Company</div>
             </div>
         </div>
         <nav class="flex-1 px-4 space-y-1">
@@ -79,17 +80,17 @@
                 <span class="inline-block w-5 text-center">🌴</span> <span class="tracking-tight">Leave Management</span>
             </a>
             <div class="mt-4 mb-1 text-xs sidebar-section uppercase tracking-wider">Payroll</div>
-            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-white sidebar-hover font-medium tracking-tight">
-                <span class="inline-block w-5 text-center">💰</span> <span class="tracking-tight">Compensation & Benefits</span>
+            <a href="{% url 'employee_benefit_list' %}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-white sidebar-hover font-medium tracking-tight {% if request.path|slice:':10' == '/benefits/' %}sidebar-active{% endif %}">
+                <span class="inline-block w-5 text-center">💰</span> <span class="tracking-tight">Employee Benefits</span>
             </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-white sidebar-hover font-medium tracking-tight">
+            <a href="{% url 'payroll_run_list' %}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-white sidebar-hover font-medium tracking-tight {% if request.path|slice:':8' == '/payroll/' %}sidebar-active{% endif %}">
                 <span class="inline-block w-5 text-center">🧾</span> <span class="tracking-tight">Payroll Run</span>
             </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-white sidebar-hover font-medium tracking-tight">
-                <span class="inline-block w-5 text-center">📄</span> <span class="tracking-tight">Payslip & Export</span>
+            <a href="{% url 'compensation_list' %}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-white sidebar-hover font-medium tracking-tight {% if request.path|slice:':14' == '/compensation/' %}sidebar-active{% endif %}">
+                <span class="inline-block w-5 text-center">💳</span> <span class="tracking-tight">Payroll Details & Payslips</span>
             </a>
             <div class="mt-4 mb-1 text-xs sidebar-section uppercase tracking-wider">Reports</div>
-            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-white sidebar-hover font-medium tracking-tight">
+            <a href="{% url 'tax_bpjs_report' %}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-white sidebar-hover font-medium tracking-tight {% if request.path|slice:':18' == '/reports/tax-bpjs/' %}sidebar-active{% endif %}">
                 <span class="inline-block w-5 text-center">📊</span> <span class="tracking-tight">Tax & BPJS Reports</span>
             </a>
         </nav>

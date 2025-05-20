@@ -1,0 +1,12 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="max-w-lg mx-auto bg-white dark:bg-gray-800 shadow rounded-lg p-8 mt-12">
+    <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Delete Payroll Run</h1>
+    <p class="mb-6 text-gray-700 dark:text-gray-200">Are you sure you want to delete the payroll run for <span class="font-semibold">{{ run.period_start }} - {{ run.period_end }}</span>? This action cannot be undone.</p>
+    <form method="post" class="flex gap-2 justify-end">
+        {% csrf_token %}
+        <a href="{% url 'payroll_run_list' %}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-100 font-semibold px-4 py-2 rounded transition">Cancel</a>
+        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded transition dark:bg-red-700 dark:hover:bg-red-800 dark:text-white">Delete</button>
+    </form>
+</div>
+{% endblock %} 

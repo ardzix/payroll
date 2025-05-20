@@ -7,15 +7,18 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block text-gray-700 dark:text-white font-semibold mb-1">Full Name</label>
-                <input type="text" name="full_name" value="{{ form.full_name.value|default_if_none:'' }}" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400" required>
+                <input type="text" name="full_name" value="{{ form.full_name.value|default_if_none:'' }}" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600" required>
+                {% for error in form.full_name.errors %}<div class="text-xs text-red-600">{{ error }}</div>{% endfor %}
             </div>
             <div>
                 <label class="block text-gray-700 dark:text-white font-semibold mb-1">NIK</label>
-                <input type="text" name="nik" value="{{ form.nik.value|default_if_none:'' }}" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400" required>
+                <input type="text" name="nik" value="{{ form.nik.value|default_if_none:'' }}" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600" required>
+                {% for error in form.nik.errors %}<div class="text-xs text-red-600">{{ error }}</div>{% endfor %}
             </div>
             <div>
                 <label class="block text-gray-700 dark:text-white font-semibold mb-1">NPWP</label>
-                <input type="text" name="npwp" value="{{ form.npwp.value|default_if_none:'' }}" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400">
+                <input type="text" name="npwp" value="{{ form.npwp.value|default_if_none:'' }}" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600">
+                {% for error in form.npwp.errors %}<div class="text-xs text-red-600">{{ error }}</div>{% endfor %}
             </div>
             <div>
                 <label class="block text-gray-700 dark:text-white font-semibold mb-1">Status</label>
@@ -24,6 +27,7 @@
                     <option value="{{ val }}" {% if form.status.value == val %}selected{% endif %}>{{ label }}</option>
                     {% endfor %}
                 </select>
+                {% for error in form.status.errors %}<div class="text-xs text-red-600">{{ error }}</div>{% endfor %}
             </div>
             <div>
                 <label class="block text-gray-700 dark:text-white font-semibold mb-1">Pay Period</label>
@@ -32,6 +36,7 @@
                     <option value="{{ val }}" {% if form.pay_period.value == val %}selected{% endif %}>{{ label }}</option>
                     {% endfor %}
                 </select>
+                {% for error in form.pay_period.errors %}<div class="text-xs text-red-600">{{ error }}</div>{% endfor %}
             </div>
             <div>
                 <label class="block text-gray-700 dark:text-white font-semibold mb-1">Work Type</label>
@@ -40,22 +45,27 @@
                     <option value="{{ val }}" {% if form.work_type.value == val %}selected{% endif %}>{{ label }}</option>
                     {% endfor %}
                 </select>
+                {% for error in form.work_type.errors %}<div class="text-xs text-red-600">{{ error }}</div>{% endfor %}
             </div>
             <div>
                 <label class="block text-gray-700 dark:text-white font-semibold mb-1">Bank Name</label>
-                <input type="text" name="bank_name" value="{{ form.bank_name.value|default_if_none:'' }}" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400">
+                <input type="text" name="bank_name" value="{{ form.bank_name.value|default_if_none:'' }}" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600">
+                {% for error in form.bank_name.errors %}<div class="text-xs text-red-600">{{ error }}</div>{% endfor %}
             </div>
             <div>
                 <label class="block text-gray-700 dark:text-white font-semibold mb-1">Bank Account Number</label>
-                <input type="text" name="bank_account_number" value="{{ form.bank_account_number.value|default_if_none:'' }}" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400">
+                <input type="text" name="bank_account_number" value="{{ form.bank_account_number.value|default_if_none:'' }}" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600">
+                {% for error in form.bank_account_number.errors %}<div class="text-xs text-red-600">{{ error }}</div>{% endfor %}
             </div>
             <div>
                 <label class="block text-gray-700 dark:text-white font-semibold mb-1">Account Holder Name</label>
-                <input type="text" name="account_holder_name" value="{{ form.account_holder_name.value|default_if_none:'' }}" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400">
+                <input type="text" name="account_holder_name" value="{{ form.account_holder_name.value|default_if_none:'' }}" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600">
+                {% for error in form.account_holder_name.errors %}<div class="text-xs text-red-600">{{ error }}</div>{% endfor %}
             </div>
             <div>
                 <label class="block text-gray-700 dark:text-white font-semibold mb-1">Base Salary</label>
-                <input type="number" name="base_salary" value="{{ form.base_salary.value|default_if_none:'' }}" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400" required>
+                <input type="number" name="base_salary" value="{{ form.base_salary.value|default_if_none:'' }}" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600" required>
+                {% for error in form.base_salary.errors %}<div class="text-xs text-red-600">{{ error }}</div>{% endfor %}
             </div>
             <div>
                 <label class="block text-gray-700 dark:text-white font-semibold mb-1">PTKP Status</label>
@@ -64,6 +74,7 @@
                     <option value="{{ val }}" {% if form.ptkp_status.value == val %}selected{% endif %}>{{ label }}</option>
                     {% endfor %}
                 </select>
+                {% for error in form.ptkp_status.errors %}<div class="text-xs text-red-600">{{ error }}</div>{% endfor %}
             </div>
         </div>
         <div class="mt-8 flex justify-end gap-2">

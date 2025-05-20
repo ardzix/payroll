@@ -1,0 +1,78 @@
+{% extends 'core/base.html' %}
+{% load humanize %}
+{% block content %}
+<div class="max-w-5xl mx-auto">
+    <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Tax & BPJS Report</h1>
+    <form method="get" class="mb-6 flex gap-4 items-end">
+        <div>
+            <label for="id_payroll_run" class="block text-gray-700 dark:text-white font-semibold mb-1">Payroll Run</label>
+            <select name="payroll_run" id="id_payroll_run" class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700">
+                {% for pr in form.fields.payroll_run.queryset %}
+                    <option value="{{ pr.pk }}" {% if form.data.payroll_run|stringformat:'s' == pr.pk|stringformat:'s' %}selected{% endif %}>{{ pr.period_start }} - {{ pr.period_end }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="bg-blue-700 hover:bg-blue-800 text-white font-semibold px-4 py-2 rounded transition">Show Report</button>
+    </form>
+    {% if run %}
+    <div class="mb-8">
+        <h2 class="text-lg font-bold text-gray-700 dark:text-white mb-2">Tax (PPh 21) Report</h2>
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800 rounded shadow">
+            <thead class="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                    <th class="py-2 px-3 text-xs font-medium text-gray-500 dark:text-gray-100 uppercase">Employee</th>
+                    <th class="py-2 px-3 text-xs font-medium text-gray-500 dark:text-gray-100 uppercase">NIK</th>
+                    <th class="py-2 px-3 text-xs font-medium text-gray-500 dark:text-gray-100 uppercase">NPWP</th>
+                    <th class="py-2 px-3 text-xs font-medium text-gray-500 dark:text-gray-100 uppercase">Gross Salary</th>
+                    <th class="py-2 px-3 text-xs font-medium text-gray-500 dark:text-gray-100 uppercase">Taxable Income (Year)</th>
+                    <th class="py-2 px-3 text-xs font-medium text-gray-500 dark:text-gray-100 uppercase">PPh 21 (Month)</th>
+                </tr>
+            </thead>
+            <tbody class="dark:text-white divide-y divide-gray-200 dark:divide-gray-700">
+                {% for item in payroll_items %}
+                <tr>
+                    <td class="py-2 px-3">{{ item.employee.full_name }}</td>
+                    <td class="py-2 px-3">{{ item.employee.nik }}</td>
+                    <td class="py-2 px-3">{{ item.employee.npwp|default:'-' }}</td>
+                    <td class="py-2 px-3">Rp {{ item.gross_salary|intcomma }}</td>
+                    <td class="py-2 px-3">Rp {{ item.taxable_income_year|intcomma }}</td>
+                    <td class="py-2 px-3">Rp {{ item.tax_deduction|intcomma }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="mb-8">
+        <h2 class="text-lg font-bold text-gray-700 dark:text-white mb-2">BPJS Report</h2>
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800 rounded shadow">
+            <thead class="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                    <th class="py-2 px-3 text-xs font-medium text-gray-500 dark:text-gray-100 uppercase">Employee</th>
+                    <th class="py-2 px-3 text-xs font-medium text-gray-500 dark:text-gray-100 uppercase">NIK</th>
+                    <th class="py-2 px-3 text-xs font-medium text-gray-500 dark:text-gray-100 uppercase">BPJS Kes (Emp)</th>
+                    <th class="py-2 px-3 text-xs font-medium text-gray-500 dark:text-gray-100 uppercase">BPJS Kes (Com)</th>
+                    <th class="py-2 px-3 text-xs font-medium text-gray-500 dark:text-gray-100 uppercase">BPJS JHT (Emp)</th>
+                    <th class="py-2 px-3 text-xs font-medium text-gray-500 dark:text-gray-100 uppercase">BPJS JHT (Com)</th>
+                    <th class="py-2 px-3 text-xs font-medium text-gray-500 dark:text-gray-100 uppercase">BPJS JP (Emp)</th>
+                    <th class="py-2 px-3 text-xs font-medium text-gray-500 dark:text-gray-100 uppercase">BPJS JP (Com)</th>
+                </tr>
+            </thead>
+            <tbody class="dark:text-white divide-y divide-gray-200 dark:divide-gray-700">
+                {% for item in payroll_items %}
+                <tr>
+                    <td class="py-2 px-3">{{ item.employee.full_name }}</td>
+                    <td class="py-2 px-3">{{ item.employee.nik }}</td>
+                    <td class="py-2 px-3">Rp {{ item.bpjs_kesehatan_employee|intcomma }}</td>
+                    <td class="py-2 px-3">Rp {{ item.bpjs_kesehatan_employer|intcomma }}</td>
+                    <td class="py-2 px-3">Rp {{ item.bpjs_ketenagakerjaan_employee|intcomma }}</td>
+                    <td class="py-2 px-3">Rp {{ item.bpjs_ketenagakerjaan_employer|intcomma }}</td>
+                    <td class="py-2 px-3">Rp {{ item.bpjs_jp_employee|intcomma }}</td>
+                    <td class="py-2 px-3">Rp {{ item.bpjs_jp_employer|intcomma }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

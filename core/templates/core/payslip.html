@@ -1,0 +1,61 @@
+{% extends 'core/base.html' %}
+{% load humanize %}
+{% block content %}
+<div class="max-w-lg mx-auto bg-white dark:bg-gray-900 shadow rounded-lg p-8 mt-8 print:shadow-none print:bg-white">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Payslip</h1>
+            <div class="text-gray-700 dark:text-gray-300 font-semibold">{{ item.payroll_run.period_start }} - {{ item.payroll_run.period_end }}</div>
+        </div>
+        <button onclick="window.print()" class="bg-blue-700 hover:bg-blue-800 text-white font-semibold px-4 py-2 rounded transition print:hidden">Download PDF</button>
+    </div>
+    <div class="mb-4">
+        <div class="font-semibold text-gray-700 dark:text-gray-200">Employee:</div>
+        <div class="text-lg font-bold text-gray-900 dark:text-white">{{ item.employee.full_name }}</div>
+        <div class="text-gray-700 dark:text-gray-300">NIK: {{ item.employee.nik }}</div>
+        <div class="text-gray-700 dark:text-gray-300">Bank: {{ item.employee.bank_name }} ({{ item.employee.bank_account_number }})</div>
+    </div>
+    <div class="mb-4">
+        <div class="font-semibold text-gray-700 dark:text-gray-200">Base Salary:</div>
+        <div class="text-gray-900 dark:text-white">Rp {{ item.employee.base_salary|intcomma }}</div>
+    </div>
+    <div class="mb-4">
+        <div class="font-semibold text-gray-700 dark:text-gray-200">Benefits:</div>
+        {% with benefits=item.employee.employeebenefit_set.all %}
+        {% if benefits %}
+        <ul class="list-disc list-inside">
+            {% for b in benefits %}
+            <li>{{ b.get_benefit_type_display }}: Rp {{ b.amount|intcomma }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="text-gray-500">-</div>
+        {% endif %}
+        {% endwith %}
+    </div>
+    <div class="mb-4">
+        <div class="font-semibold text-gray-700 dark:text-gray-200">Gross Salary:</div>
+        <div class="text-gray-900 dark:text-white">Rp {{ item.gross_salary|intcomma }}</div>
+    </div>
+    <div class="mb-4">
+        <div class="font-semibold text-gray-700 dark:text-gray-200">Deductions:</div>
+        <ul class="list-disc list-inside">
+            <li>PPh 21 (Tax): Rp {{ item.tax_deduction|intcomma }}</li>
+            <li>BPJS Kesehatan (Employee): Rp {{ item.bpjs_kesehatan_employee|intcomma }}</li>
+            <li>BPJS Ketenagakerjaan JHT (Employee): Rp {{ item.bpjs_ketenagakerjaan_employee|intcomma }}</li>
+            <li>BPJS Ketenagakerjaan JP (Employee): Rp {{ item.bpjs_jp_employee|intcomma }}</li>
+            <li>Other Deductions: Rp {{ item.other_deductions|intcomma }}</li>
+        </ul>
+        <div class="mt-2 font-semibold text-gray-700 dark:text-gray-200">Total Deductions: <span class="text-gray-900 dark:text-white">Rp {{ item.total_deductions|intcomma }}</span></div>
+    </div>
+    <div class="mb-4">
+        <div class="font-semibold text-gray-700 dark:text-gray-200">Net Salary:</div>
+        <div class="text-xl font-bold text-blue-700 dark:text-blue-400">Rp {{ item.net_salary|intcomma }}</div>
+    </div>
+    <div class="mb-4">
+        <div class="font-semibold text-gray-700 dark:text-gray-200">Notes:</div>
+        <div class="text-gray-900 dark:text-white">{{ item.notes|default:'-' }}</div>
+    </div>
+    <div class="text-xs text-gray-400 mt-8 print:hidden">This payslip is computer generated and does not require a signature.</div>
+</div>
+{% endblock %} 
