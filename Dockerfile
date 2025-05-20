@@ -23,6 +23,8 @@ COPY requirements.txt /app/
 RUN pip install --upgrade pip \
     && pip install -r requirements.txt
 
+RUN pip install --no-cache-dir uwsgi
+
 # Create a non-root user
 RUN adduser --disabled-password --gecos '' django
 
